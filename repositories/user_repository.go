@@ -9,7 +9,6 @@ import (
 	"github.com/jbaikge/sparky/models"
 	"github.com/jbaikge/sparky/modules/database"
 	"github.com/jbaikge/sparky/modules/password"
-	"golang.org/x/crypto/bcrypt"
 )
 
 type UserRepository struct {
@@ -37,14 +36,15 @@ func (r *UserRepository) CreateUser(ctx context.Context, arg CreateUserParams) (
         last_name,
         email,
         password,
+        start_date,
         active,
         created_at,
         updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `
 	hashedPassword, err := password.Hash(arg.Password)
 	if err != nil {
-		return
+		return nil, fmt.Errorf("failed to hash password: %w", err)
 	}
 
 	now := time.Now()
@@ -55,6 +55,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, arg CreateUserParams) (
 		arg.LastName,
 		arg.Email,
 		hashedPassword,
+		now.Format("2006-01-02"),
 		arg.Active,
 		now,
 		now,
