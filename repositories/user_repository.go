@@ -8,6 +8,7 @@ import (
 
 	"github.com/jbaikge/sparky/models"
 	"github.com/jbaikge/sparky/modules/database"
+	"github.com/jbaikge/sparky/modules/password"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -41,7 +42,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, arg CreateUserParams) (
         updated_at
     ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(arg.Password), bcrypt.DefaultCost)
+	hashedPassword, err := password.Hash(arg.Password)
 	if err != nil {
 		return
 	}
@@ -53,7 +54,7 @@ func (r *UserRepository) CreateUser(ctx context.Context, arg CreateUserParams) (
 		arg.FirstName,
 		arg.LastName,
 		arg.Email,
-		string(hashedPassword),
+		hashedPassword,
 		arg.Active,
 		now,
 		now,
