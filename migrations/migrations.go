@@ -113,3 +113,13 @@ func Migrate(db database.Database) (err error) {
 	}
 	return
 }
+
+func choose(db database.Database, mysqlQuery, sqliteQuery string) string {
+	switch db.Engine() {
+	case database.EngineMySQL:
+		return mysqlQuery
+	case database.EngineSQLite:
+		return sqliteQuery
+	}
+	panic(fmt.Sprintf("unknown database engine: %s", db.Engine()))
+}
