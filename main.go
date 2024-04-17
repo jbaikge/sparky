@@ -5,8 +5,10 @@ import (
 	"log/slog"
 	"os"
 
+	"github.com/jbaikge/sparky/handlers"
 	"github.com/jbaikge/sparky/migrations"
 	"github.com/jbaikge/sparky/modules/database"
+	"github.com/jbaikge/sparky/modules/middleware"
 )
 
 func main() {
@@ -37,4 +39,7 @@ func main() {
 		slog.Error("failed to migrate", "error", err)
 		os.Exit(1)
 	}
+
+	handlers.AddMiddleware(middleware.NewLogger(slog.Default()))
+	handlers.AddMiddleware(middleware.NewContentType())
 }
