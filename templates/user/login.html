@@ -1,0 +1,16 @@
+{{ define "user/login" -}}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <title>Login</title>
+  </head>
+  <body>
+    <main>
+      {{ template "user/login-form" }}
+    </main>
+  </body>
+</html>
+{{- end }}

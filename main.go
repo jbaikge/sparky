@@ -43,7 +43,9 @@ func main() {
 
 	app := web.NewApp(address)
 	handlers.Apply(app)
+	app.AddMiddleware(middleware.NewAdminHandler(db))
+	app.AddMiddleware(middleware.NewLiveTemplate("templates"))
 	app.AddMiddleware(middleware.NewContentType())
-	app.AddMiddleware(middleware.NewLogger(slog.Default()))
+	app.AddMiddleware(middleware.NewLogger(slog.Default())) // Always last
 	app.ListenAndServe()
 }
