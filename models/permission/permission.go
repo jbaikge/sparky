@@ -1,4 +1,4 @@
-package models
+package permission
 
 type Permission struct {
 	PermissionId string

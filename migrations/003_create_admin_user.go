@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log/slog"
 
+	"github.com/jbaikge/sparky/models/user"
 	"github.com/jbaikge/sparky/modules/database"
 	"github.com/jbaikge/sparky/modules/password"
-	"github.com/jbaikge/sparky/repositories"
 )
 
 func init() {
@@ -15,8 +15,8 @@ func init() {
 }
 
 func migrateCreateAdministrator(ctx context.Context, db database.Database) error {
-	repo := repositories.User(db)
-	params := repositories.CreateUserParams{
+	repo := user.NewUserRepository(db)
+	params := user.CreateUserParams{
 		FirstName: "Super",
 		LastName:  "Administrator",
 		Email:     "admin@sparky.lan",

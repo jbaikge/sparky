@@ -1,10 +1,9 @@
-package repositories
+package permission
 
 import (
 	"context"
 	"fmt"
 
-	"github.com/jbaikge/sparky/models"
 	"github.com/jbaikge/sparky/modules/database"
 )
 
@@ -12,7 +11,7 @@ type PermissionRepository struct {
 	db database.Database
 }
 
-func Permission(db database.Database) *PermissionRepository {
+func NewPermissionRepository(db database.Database) *PermissionRepository {
 	return &PermissionRepository{
 		db: db,
 	}
@@ -24,7 +23,7 @@ type CreatePermissionParams struct {
 }
 
 func (r *PermissionRepository) CreatePermission(ctx context.Context, arg CreatePermissionParams) error {
-	const query = `
+	query := `
     INSERT INTO permissions (permission_id, description) VALUES (?, ?)
     `
 	_, err := r.db.ExecContext(ctx, query, arg.PermissionId, arg.Description)
@@ -32,15 +31,15 @@ func (r *PermissionRepository) CreatePermission(ctx context.Context, arg CreateP
 }
 
 func (r *PermissionRepository) DeletePermission(ctx context.Context, permissionId string) error {
-	const query = `
+	query := `
     DELETE FROM permissions WHERE permission_id = ?
     `
 	_, err := r.db.ExecContext(ctx, query, permissionId)
 	return fmt.Errorf("failed to delete permission (%s): %w", permissionId, err)
 }
 
-func (r *PermissionRepository) GetPermissions(ctx context.Context) ([]models.Permission, error) {
-	const query = `
+func (r *PermissionRepository) GetPermissions(ctx context.Context) ([]Permission, error) {
+	query := `
     SELECT permission_id, description FROM permissions ORDER BY permission_id
     `
 	rows, err := r.db.QueryContext(ctx, query)
@@ -49,9 +48,9 @@ func (r *PermissionRepository) GetPermissions(ctx context.Context) ([]models.Per
 	}
 
 	defer rows.Close()
-	var items []models.Permission
+	var items []Permission
 	for rows.Next() {
-		var i models.Permission
+		var i Permission
 		if err := rows.Scan(&i.PermissionId, &i.Description); err != nil {
 			return nil, fmt.Errorf("failed to scan permission: %w", err)
 		}
