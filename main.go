@@ -13,8 +13,9 @@ import (
 	"github.com/jbaikge/sparky/modules/web"
 )
 
+//go:embed assets
 //go:embed templates
-var templateFS embed.FS
+var srcFS embed.FS
 
 func main() {
 	var development bool
@@ -51,9 +52,11 @@ func main() {
 	handlers.Apply(app)
 
 	if development {
+		handlers.Assets(app, "assets")
 		app.AddMiddleware(middleware.NewLiveTemplate("templates"))
 	} else {
-		app.AddMiddleware(middleware.NewEmbeddedTemplate(templateFS, "templates"))
+		handlers.AssetsFS(app, srcFS)
+		app.AddMiddleware(middleware.NewEmbeddedTemplate(srcFS, "templates"))
 	}
 
 	app.AddMiddleware(middleware.NewDatabase(db))

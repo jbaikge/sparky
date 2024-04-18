@@ -1,6 +1,9 @@
 package handlers
 
-import "net/http"
+import (
+	"embed"
+	"net/http"
+)
 
 type Mux interface {
 	Handle(pattern string, handler http.Handler)
@@ -11,4 +14,12 @@ func Apply(mux Mux) {
 	mux.HandleFunc("GET /admin/login", adminLogin)
 	mux.HandleFunc("POST /admin/login", adminLoginAuth)
 	mux.HandleFunc("GET /admin/dashboard", dashboard)
+}
+
+func Assets(mux Mux, path string) {
+	mux.Handle("/admin/assets/", http.StripPrefix("/admin/assets/", http.FileServer(http.Dir(path))))
+}
+
+func AssetsFS(mux Mux, fs embed.FS) {
+	mux.Handle("/admin/assets/", http.StripPrefix("/admin/", http.FileServerFS(fs)))
 }

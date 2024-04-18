@@ -1,0 +1,6 @@
+@media screen and (prefers-color-scheme: dark) {
+  body {
+    background-color: #2e323e;
+    color: #cbd0da;
+  }
+}
