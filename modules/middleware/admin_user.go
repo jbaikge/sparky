@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"context"
-	"log/slog"
 	"net/http"
 	"strings"
 
@@ -72,7 +71,8 @@ func (m *AdminUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err = m.sessionRepo.Extend(r.Context(), sessionId); err != nil {
-		slog.Error("failed to extend session", "error", err)
+		http.Redirect(w, r, "/admin/login#"+err.Error(), http.StatusTemporaryRedirect)
+		return
 	}
 
 	ctx := context.WithValue(r.Context(), ContextAdminUser, user)
