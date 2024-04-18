@@ -10,7 +10,7 @@ func TemporaryPassword(length int) string {
 	letters := []byte(`ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789`)
 	pw := make([]byte, length)
 	for i := range pw {
-		pw[i] = letters[rand.Intn(length)]
+		pw[i] = letters[rand.Intn(len(letters))]
 	}
 	return string(pw)
 }
