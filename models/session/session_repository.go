@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"log/slog"
 	"time"
 
 	"github.com/google/uuid"
@@ -43,13 +42,14 @@ func (r *SessionRepository) Extend(ctx context.Context, sessionId string) error 
     `
 
 	var expires time.Time
-	err := r.db.QueryRowContext(ctx, selectQuery).Scan(&expires)
+	err := r.db.QueryRowContext(ctx, selectQuery, sessionId).Scan(&expires)
 	if err != nil {
 		return err
 	}
 
-	slog.Warn("expires.Sub(time.Now())", "duration", expires.Sub(time.Now()))
-	slog.Warn("time.Now().Sub(expires)", "duration", time.Now().Sub(expires))
+	if expires.Sub(time.Now()) > SessionDuration/2 {
+		return nil
+	}
 
 	updateQuery := `
     UPDATE user_sessions SET expires_at = ? WHERE session_id = ?

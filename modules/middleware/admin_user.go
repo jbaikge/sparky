@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"strings"
 
@@ -70,7 +71,9 @@ func (m *AdminUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = m.sessionRepo.Extend(r.Context(), sessionId)
+	if err = m.sessionRepo.Extend(r.Context(), sessionId); err != nil {
+		slog.Error("failed to extend session", "error", err)
+	}
 
 	ctx := context.WithValue(r.Context(), ContextAdminUser, user)
 	m.handler.ServeHTTP(w, r.WithContext(ctx))
