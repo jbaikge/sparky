@@ -3,7 +3,6 @@ package middleware
 import (
 	"context"
 	"html/template"
-	"log/slog"
 	"net/http"
 	"path/filepath"
 )
@@ -30,6 +29,5 @@ func (m *LiveTemplate) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	tpl = template.Must(tpl.ParseGlob(filepath.Join(m.path, "*.html")))
 	tpl = template.Must(tpl.ParseGlob(filepath.Join(m.path, "*", "*.html")))
 	ctx := context.WithValue(r.Context(), ContextTemplate, tpl)
-	slog.Debug("live templates" + tpl.DefinedTemplates())
 	m.handler.ServeHTTP(w, r.WithContext(ctx))
 }
