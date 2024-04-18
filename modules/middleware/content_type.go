@@ -1,6 +1,9 @@
 package middleware
 
-import "net/http"
+import (
+	"net/http"
+	"strings"
+)
 
 var _ Middleware = new(ContentType)
 
@@ -17,6 +20,10 @@ func (m *ContentType) SetHandler(handler http.Handler) {
 }
 
 func (m *ContentType) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "text/html; charset=utf=8")
+	if strings.HasSuffix(r.URL.Path, ".css") {
+		w.Header().Set("Content-Type", "text/css")
+	} else {
+		w.Header().Set("Content-Type", "text/html; charset=utf=8")
+	}
 	m.handler.ServeHTTP(w, r)
 }
