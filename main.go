@@ -1,6 +1,7 @@
 package main
 
 import (
+	"embed"
 	"flag"
 	"log/slog"
 	"os"
@@ -11,6 +12,9 @@ import (
 	"github.com/jbaikge/sparky/modules/middleware"
 	"github.com/jbaikge/sparky/modules/web"
 )
+
+//go:embed templates
+var templateFS embed.FS
 
 func main() {
 	var development bool
@@ -28,7 +32,9 @@ func main() {
 	flag.StringVar(&address, "server.address", "0.0.0.0:3003", "Address and port to listen on")
 	flag.Parse()
 
-	slog.SetLogLoggerLevel(slog.LevelDebug)
+	if development {
+		slog.SetLogLoggerLevel(slog.LevelDebug)
+	}
 
 	db, err := database.Connect(dbEngine, dbName, dbHost, dbPort, dbUser, dbPass)
 	if err != nil {
@@ -43,9 +49,15 @@ func main() {
 
 	app := web.NewApp(address)
 	handlers.Apply(app)
+
+	if development {
+		app.AddMiddleware(middleware.NewLiveTemplate("templates"))
+	} else {
+		app.AddMiddleware(middleware.NewEmbeddedTemplate(templateFS, "templates"))
+	}
+
 	app.AddMiddleware(middleware.NewDatabase(db))
 	app.AddMiddleware(middleware.NewAdminHandler(db))
-	app.AddMiddleware(middleware.NewLiveTemplate("templates"))
 	app.AddMiddleware(middleware.NewContentType())
 	app.AddMiddleware(middleware.NewLogger(slog.Default())) // Always last
 	app.ListenAndServe()

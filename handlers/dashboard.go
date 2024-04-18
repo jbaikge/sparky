@@ -1,8 +1,7 @@
 package handlers
 
 import (
-	"bytes"
-	"fmt"
+	"html/template"
 	"net/http"
 
 	"github.com/jbaikge/sparky/models/user"
@@ -10,8 +9,15 @@ import (
 )
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
-	user := r.Context().Value(middleware.ContextAdminUser).(*user.User)
-	var buf bytes.Buffer
-	fmt.Fprintf(&buf, "Welcome to the dashboard, %s", user.Name())
-	w.Write(buf.Bytes())
+	data := struct {
+		Title string
+		User  *user.User
+	}{
+		Title: "Dashboard",
+	}
+
+	tpl := r.Context().Value(middleware.ContextTemplate).(*template.Template)
+	data.User = r.Context().Value(middleware.ContextAdminUser).(*user.User)
+
+	tpl.ExecuteTemplate(w, "admin/dashboard", &data)
 }
