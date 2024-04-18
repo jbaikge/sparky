@@ -43,6 +43,7 @@ func main() {
 
 	app := web.NewApp(address)
 	handlers.Apply(app)
+	app.AddMiddleware(middleware.NewDatabase(db))
 	app.AddMiddleware(middleware.NewAdminHandler(db))
 	app.AddMiddleware(middleware.NewLiveTemplate("templates"))
 	app.AddMiddleware(middleware.NewContentType())
