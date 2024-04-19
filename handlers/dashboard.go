@@ -10,5 +10,5 @@ func dashboard(w http.ResponseWriter, r *http.Request) {
 	p := page.New(r.Context())
 	p.Data["PageActiveDashboard"] = true
 
-	p.Render(w, "admin/dashboard")
+	p.Render(w, "dashboard")
 }
