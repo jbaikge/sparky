@@ -16,5 +16,5 @@ directory. MySQL/MariaDB is an alternative for a more production-based
 environment.
 
 ```
-sparky -dev
+sparky
 ```
