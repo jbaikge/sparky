@@ -26,7 +26,9 @@ func New(ctx context.Context) *Page {
 
 	p.db = ctx.Value(middleware.ContextDatabase).(database.Database)
 	p.tpl = ctx.Value(middleware.ContextTemplate).(*template.Template)
-	p.admin = ctx.Value(middleware.ContextAdminUser).(*user.User)
+	if admin := ctx.Value(middleware.ContextAdminUser); admin != nil {
+		p.admin = admin.(*user.User)
+	}
 	// TODO capture regular user?
 
 	p.Data["Admin"] = p.admin
@@ -39,6 +41,7 @@ func (p *Page) Admin() *user.User {
 }
 
 func (p *Page) Render(w io.Writer, name string) {
+	p.Data["RenderedTemplate"] = name
 	if err := p.tpl.ExecuteTemplate(w, name, p.Data); err != nil {
 		fmt.Fprintf(w, "Error during execution: %v", err)
 		slog.Error("template execution failed", "error", err)
