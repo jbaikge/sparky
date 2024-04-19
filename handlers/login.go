@@ -18,7 +18,7 @@ import (
 func adminLogin(w http.ResponseWriter, r *http.Request) {
 	p := page.New(r.Context())
 	p.Data["Title"] = "Login"
-	p.Render(w, "user/login")
+	p.Render(w, "login")
 }
 
 func adminLoginAuth(w http.ResponseWriter, r *http.Request) {
@@ -33,7 +33,7 @@ func adminLoginAuth(w http.ResponseWriter, r *http.Request) {
 			p.Data["Error"] = err.Error()
 		}
 		p.Data["Email"] = email
-		p.Render(w, "user/login-form")
+		p.Render(w, "login-form")
 	}(p)
 
 	db := r.Context().Value(middleware.ContextDatabase).(database.Database)
@@ -64,6 +64,7 @@ func adminLoginAuth(w http.ResponseWriter, r *http.Request) {
 	cookie := &http.Cookie{
 		Name:  middleware.AdminSessionCookieName,
 		Value: sessionId,
+		Path:  "/",
 	}
 	http.SetCookie(w, cookie)
 	w.Header().Set("HX-Redirect", "/admin/dashboard")
