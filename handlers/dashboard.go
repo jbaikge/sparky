@@ -1,23 +1,14 @@
 package handlers
 
 import (
-	"html/template"
 	"net/http"
 
-	"github.com/jbaikge/sparky/models/user"
-	"github.com/jbaikge/sparky/modules/middleware"
+	"github.com/jbaikge/sparky/modules/page"
 )
 
 func dashboard(w http.ResponseWriter, r *http.Request) {
-	data := struct {
-		Title string
-		User  *user.User
-	}{
-		Title: "Dashboard",
-	}
+	p := page.New(r.Context())
+	p.Data["PageActiveDashboard"] = true
 
-	tpl := r.Context().Value(middleware.ContextTemplate).(*template.Template)
-	data.User = r.Context().Value(middleware.ContextAdminUser).(*user.User)
-
-	tpl.ExecuteTemplate(w, "admin/dashboard", &data)
+	p.Render(w, "admin/dashboard")
 }

@@ -10,11 +10,12 @@
   <body>
     <header>
       <h1>Header</h1>
+      <h2>Welcome, {{ .Admin.Name }}</h2>
     </header>
     <aside>
       <nav>
         <ol>
-          <li class="active"><a href="/admin/dashboard">Dashboard</a></li>
+          <li{{ if .PageActiveDashboard }} class="active"{{ end }}><a href="/admin/dashboard">Dashboard</a></li>
           <li>
             <span>Users</span>
             <ol>
