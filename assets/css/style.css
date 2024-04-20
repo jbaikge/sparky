@@ -1,6 +1,9 @@
+/**
+ * https://colorhunt.co/palette/35374b34495550727b78a083
+ */
 @media screen and (prefers-color-scheme: dark) {
   body {
-    background-color: #2e323e;
+    background-color: #35374b;
     color: #cbd0da;
   }
 }

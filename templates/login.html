@@ -1,24 +1,31 @@
-{{ define "user/login" -}}
+{{ define "login" -}}
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
     <title>Login | Sparky</title>
-    <style type="text/css">
-      @media screen and (prefers-color-scheme: dark) {
-        body {
-          background-color: #2e323e;
-          color: #cbd0da;
-        }
-      }
-    </style>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css">
   </head>
-  <body>
+  <body class="center-align middle-align" style="min-height: 100vh;">
     <main>
       {{ template "login-form" . }}
     </main>
+    <script>
+      function setColorScheme(e) {
+        const body = document.querySelector("body");
+        if (e.matches) {
+          body.classList.add("dark");
+        } else {
+          body.classList.remove("dark");
+        }
+      }
+      const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)");
+      darkModePreference.addEventListener("change", setColorScheme);
+      setColorScheme(darkModePreference);
+    </script>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"></script>
   </body>
 </html>
 {{- end }}
