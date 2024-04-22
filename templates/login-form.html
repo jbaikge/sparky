@@ -6,15 +6,18 @@
   >
   <article class="border">
     <h5>Sparky Login</h5>
-    <div class="field label extra border{{ with .ErrorEmail }} invalid{{ end }}">
+    {{ if .ErrorDatabase }}
+    <div class="snackbar error">{{ .Error }}</div>
+    {{ end }}
+    <div class="field label extra border{{ if .ErrorEmail }} invalid{{ end }}">
       <input type="email" id="email" name="email" value="{{ .Email }}" required>
       <label for="email">Email</label>
-      {{ with .ErrorEmail }}<span class="error">{{ . }}</span>{{ end }}
+      {{ if .ErrorEmail }}<span class="error">{{ .Error }}</span>{{ end }}
     </div>
-    <div class="field label extra border{{ with .ErrorPassword }} invalid{{ end }}">
-      <input type="password" id="password" name="password" required>
+    <div class="field label extra border{{ if .ErrorPassword }} invalid{{ end }}">
+      <input type="password" id="password" name="password" maxlength="72" required>
       <label for="password">Password</label>
-      {{ with .ErrorPassword }}<span class="error">{{ . }}</span>{{ end }}
+      {{ if .ErrorPassword }}<span class="error">{{ .Error }}</span>{{ end }}
     </div>
     <div>
       <button type="submit" class="btn">Login</button>

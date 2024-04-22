@@ -42,15 +42,18 @@ func adminLoginAuth(w http.ResponseWriter, r *http.Request) {
 	user, err := userRepo.GetUserByEmail(r.Context(), email)
 	if errors.Is(err, sql.ErrNoRows) {
 		err = fmt.Errorf("Invalid email address")
+		p.Data["ErrorEmail"] = true
 		return
 	} else if err != nil {
 		err = fmt.Errorf("Error from the database: %w", err)
+		p.Data["ErrorDatabase"] = true
 		return
 	}
 
 	pw := r.PostFormValue("password")
 	if !password.Validate(user.Password, pw) {
 		err = fmt.Errorf("Invalid password")
+		p.Data["ErrorPassword"] = true
 		return
 	}
 
@@ -58,6 +61,7 @@ func adminLoginAuth(w http.ResponseWriter, r *http.Request) {
 	sessionId, err := sessionRepo.NewSession(r.Context(), user.UserId)
 	if err != nil {
 		err = fmt.Errorf("Unable to create new session: %w", err)
+		p.Data["ErrorSession"] = true
 		return
 	}
 
