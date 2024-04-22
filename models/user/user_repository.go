@@ -123,3 +123,74 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
 
 	return
 }
+
+type UserListParams struct {
+	Page    int
+	PerPage int
+}
+
+func (p UserListParams) Limit() int {
+	return p.PerPage
+}
+
+func (p UserListParams) Offset() int {
+	return (p.Page - 1) * p.PerPage
+}
+
+func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (items []*User, err error) {
+	query := `
+    SELECT
+        user_id,
+        first_name,
+        last_name,
+        email,
+        start_date,
+        end_date,
+        active,
+        created_at,
+        updated_at
+    FROM
+        users
+    ORDER BY
+        last_name ASC,
+        first_name ASC
+    LIMIT ? OFFSET ?
+    `
+
+	var endDate sql.NullTime
+	rows, err := r.db.QueryContext(ctx, query, params.Limit(), params.Offset())
+	if err != nil {
+		return nil, fmt.Errorf("database error: %w", err)
+	}
+
+	items = make([]*User, 0, params.Limit())
+	for rows.Next() {
+		i := new(User)
+		err = rows.Scan(
+			&i.UserId,
+			&i.FirstName,
+			&i.LastName,
+			&i.Email,
+			&i.StartDate,
+			&endDate,
+			&i.Active,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+		)
+		if err != nil {
+			return nil, fmt.Errorf("scan error: %w", err)
+		}
+		if endDate.Valid {
+			i.EndDate = endDate.Time
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, fmt.Errorf("failed to close rowset: %w", err)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error during row traversal: %w", err)
+	}
+
+	return
+}

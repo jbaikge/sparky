@@ -40,6 +40,10 @@ func (p *Page) Admin() *user.User {
 	return p.admin
 }
 
+func (p *Page) Database() database.Database {
+	return p.db
+}
+
 func (p *Page) Render(w io.Writer, name string) {
 	p.Data["RenderedTemplate"] = name
 	if err := p.tpl.ExecuteTemplate(w, name, p.Data); err != nil {
