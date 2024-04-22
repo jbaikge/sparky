@@ -6,7 +6,7 @@
   >
   <article class="border">
     <h5>Sparky Login</h5>
-    {{ if .ErrorDatabase }}
+    {{ if or .ErrorDatabase .ErrorSession }}
     <div class="snackbar error">{{ .Error }}</div>
     {{ end }}
     <div class="field label extra border{{ if .ErrorEmail }} invalid{{ end }}">
