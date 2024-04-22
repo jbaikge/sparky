@@ -2,38 +2,43 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ with .Title }}{{ . }} | {{ end }}Sparky</title>
+    <script src="/admin/assets/js/color-scheme.js"></script>
+    <meta name="X-Rendered-Template" content="{{ .RenderedTemplate }}">
     <link rel="stylesheet" type="text/css" href="/admin/assets/css/style.css">
   </head>
   <body>
     <header>
-      <h1>Header</h1>
-      <h2>Welcome, {{ .Admin.Name }}</h2>
+      [Hamburger]
+      [Logo]
+      [Name]
+      [Gaaaaap]
+      [User Avatar]
     </header>
-    <aside>
-      <nav>
-        <ol>
-          <li{{ if .PageActiveDashboard }} class="active"{{ end }}><a href="/admin/dashboard">Dashboard</a></li>
-          <li>
-            <span>Users</span>
-            <ol>
-              <li><a href="/admin/users">Users</a></li>
-              <li><a href="/admin/users/add">Add User</a></li>
-            </ol>
-          </li>
-        </ol>
-      </nav>
-    </aside>
+    <nav>
+      <ol>
+        <li{{ if .PageActiveDashboard }} class="active"{{ end }}>
+          <a href="/admin/dashboard">Dashboard</a>
+        </li>
+        <li{{ if .PageActiveEvents }} class="active"{{ end }}>
+          <a href="/admin/events">Events</a>
+        </li>
+        <li{{ if .PageActiveUsers }} class="active"{{ end }}>
+          <a href="/admin/users">Users</a>
+        </li>
+      </ol>
+    </nav>
     <main>
 {{ end }}
 
 {{ define "footer" }}
     </main>
     <footer>
-      <p>Rendered Template: {{ .RenderedTemplate }}</p>
+      Footer diagnostics
     </footer>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
   </body>
 </html>
 {{- end }}
