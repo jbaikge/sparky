@@ -24,3 +24,52 @@ func userList(w http.ResponseWriter, r *http.Request) {
 	p.Data["Users"] = users
 	p.Render(w, "user/list")
 }
+
+func userAddForm(w http.ResponseWriter, r *http.Request) {
+	tpl := "user/form"
+
+	p := page.New(r.Context())
+	p.Data["PageActiveUsers"] = true
+	p.Data["FormAction"] = r.URL.Path
+
+	// Really important or blank records go into the database, whoops
+	if r.Method == http.MethodGet {
+		p.Render(w, tpl)
+	}
+
+	u := user.User{
+		FirstName: r.PostFormValue("firstName"),
+		LastName:  r.PostFormValue("lastName"),
+		Email:     r.PostFormValue("email"),
+		Password:  r.PostFormValue("password"),
+	}
+	p.Data["User"] = u
+
+	for key, err := range u.Validate() {
+		p.AddError(key, err)
+	}
+	if p.HasErrors() {
+		p.Render(w, tpl)
+		return
+	}
+
+	userRepo := user.NewUserRepository(p.Database())
+	params := user.CreateUserParams{
+		FirstName: u.FirstName,
+		LastName:  u.LastName,
+		Email:     u.Email,
+		Password:  u.Password,
+	}
+	slog.Debug("creating user", "params", params)
+	if _, err := userRepo.CreateUser(r.Context(), params); err != nil {
+		p.AddError("CreateUser", err.Error())
+	}
+
+	// Great success, go back to the user list
+	if !p.HasErrors() {
+		http.Redirect(w, r, "/admin/users", http.StatusSeeOther)
+		return
+	}
+
+	p.Render(w, tpl)
+}

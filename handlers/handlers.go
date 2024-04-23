@@ -15,6 +15,8 @@ func Apply(mux Mux) {
 	mux.HandleFunc("POST /admin/login", adminLoginAuth)
 	mux.HandleFunc("GET /admin/dashboard", dashboard)
 	mux.HandleFunc("GET /admin/users", userList)
+	mux.HandleFunc("GET /admin/users/add", userAddForm)
+	mux.HandleFunc("POST /admin/users/add", userAddForm)
 }
 
 func Assets(mux Mux, path string) {

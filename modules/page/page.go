@@ -50,6 +50,10 @@ func (p *Page) Database() database.Database {
 	return p.db
 }
 
+func (p *Page) HasErrors() bool {
+	return len(p.errs) > 0
+}
+
 func (p *Page) Render(w io.Writer, name string) {
 	p.Data["Errors"] = p.errs
 	p.Data["RenderedTemplate"] = name
