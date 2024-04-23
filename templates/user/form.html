@@ -4,7 +4,7 @@
   <h2>Add User</h2>
 </header>
 <form method="post" action="{{ .FormAction }}">
-  <fieldset>
+  <fieldset style="grid-template-columns: 1fr 1fr;">
     <sl-input name="firstName" label="First Name" value="{{ .User.FirstName }}" autocomplete="off" required></sl-input>
     <sl-input name="lastName" label="Last Name" value="{{ .User.LastName }}" required></sl-input>
     <sl-input name="email" type="email" label="Email" value="{{ .User.Email }}" required {{- with .ErrorEmail }} help-text="{{ . }}" data-user-invalid {{ end }}></sl-input>
