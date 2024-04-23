@@ -6,30 +6,34 @@
     <sl-button href="/admin/users/add">Add User</sl-button>
   </sl-button-group>
 </header>
-<table>
-  <thead>
-    <tr>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {{ range .Users }}
+<div class="table-scroll">
+  <table>
+    <thead>
       <tr>
-        <td>{{ .FirstName }}</td>
-        <td>{{ .LastName }}</td>
-        <td>{{ .Email }}</td>
-        <td>
-          <sl-button-group>
-            <sl-button href="/admin/users/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
-            <sl-button href="/admin/users/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
-          </sl-button-group>
-        </td>
+        <th>First Name</th>
+        <th>Last Name</th>
+        <th>Email</th>
+        <th>Active</th>
+        <th></th>
       </tr>
-    {{ end }}
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      {{ range .Users }}
+        <tr>
+          <td>{{ .FirstName }}</td>
+          <td>{{ .LastName }}</td>
+          <td>{{ .Email }}</td>
+          <td>{{ if .Active }}<sl-icon name="check-lg" label="Active user" style="color: var(--sl-color-success-500);"></sl-icon>{{ end }}</td>
+          <td>
+            <sl-button-group>
+              <sl-button href="/admin/users/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
+              <sl-button href="/admin/users/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
+            </sl-button-group>
+          </td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>
 {{ template "footer" . -}}
 {{ end }}
