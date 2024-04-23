@@ -34,6 +34,9 @@ func userAddForm(w http.ResponseWriter, r *http.Request) {
 
 	// Really important or blank records go into the database, whoops
 	if r.Method == http.MethodGet {
+		p.Data["User"] = user.User{
+			Active: true,
+		}
 		p.Render(w, tpl)
 		return
 	}
