@@ -4,18 +4,19 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="rendered" content="{{ .RenderedTemplate }}">
     <title>{{ with .Title }}{{ . }} | {{ end }}Sparky</title>
     <script src="/admin/assets/js/color-scheme.js"></script>
-    <meta name="X-Rendered-Template" content="{{ .RenderedTemplate }}">
     <link rel="stylesheet" type="text/css" href="/admin/assets/css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/dark.css">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace.js" ></script>
   </head>
   <body>
     <header>
-      [Hamburger]
-      [Logo]
-      [Name]
-      [Gaaaaap]
-      [User Avatar]
+      <sl-icon-button name="list"></sl-icon-button>
+      <h1>Sparky</h1>
+      <sl-avatar label="User avatar"></sl-avatar>
     </header>
     <nav>
       <ol>

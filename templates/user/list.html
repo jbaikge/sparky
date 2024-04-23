@@ -1,5 +1,8 @@
 {{ define "user/list" }}
 {{ template "header" . }}
+<sl-button-group class="header-buttons">
+  <sl-button href="/admin/users/add">Add User</sl-button>
+</sl-button-group>
 <table>
   <thead>
     <tr>
@@ -14,11 +17,10 @@
         <td>{{ .FirstName }}</td>
         <td>{{ .LastName }}</td>
         <td>
-          <div class="button-group">
-            <a href="/admin/users/edit/{{ .UserId }}" class="button small">Edit</a>
-            <a href="#" class="button small">Mooooooo</a>
-            <a href="/admin/users/delete/{{ .UserId }}" class="button small tertiary">Delete</a>
-          </div>
+          <sl-button-group>
+            <sl-button href="/admin/users/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
+            <sl-button href="/admin/users/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
+          </sl-button-group>
         </td>
       </tr>
     {{ end }}

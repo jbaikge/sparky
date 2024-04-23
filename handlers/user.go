@@ -10,6 +10,8 @@ import (
 
 func userList(w http.ResponseWriter, r *http.Request) {
 	p := page.New(r.Context())
+	p.Data["PageActiveUsers"] = true
+
 	userRepo := user.NewUserRepository(p.Database())
 	params := user.UserListParams{
 		Page:    1,
