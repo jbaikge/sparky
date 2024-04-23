@@ -18,6 +18,10 @@ type User struct {
 	UpdatedAt time.Time
 }
 
+func (u User) Initials() string {
+	return u.FirstName[0:1] + u.LastName[0:1]
+}
+
 func (u User) Name() string {
 	return fmt.Sprintf("%s %s", u.FirstName, u.LastName)
 }

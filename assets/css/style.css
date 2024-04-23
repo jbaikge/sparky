@@ -48,7 +48,7 @@ body > header sl-icon-button {
 body > header h1 {
   margin: 0;
 }
-body > header sl-avatar {
+body > header .avatar {
   flex-grow: 1;
   display: flex;
   justify-content: flex-end;
