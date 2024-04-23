@@ -14,8 +14,11 @@
         <td>{{ .FirstName }}</td>
         <td>{{ .LastName }}</td>
         <td>
-          <a href="/admin/users/edit/{{ .UserId }}">Edit</a>
-          <a href="/admin/users/delete/{{ .UserId }}">Delete</a>
+          <div class="button-group">
+            <a href="/admin/users/edit/{{ .UserId }}" class="button small">Edit</a>
+            <a href="#" class="button small">Mooooooo</a>
+            <a href="/admin/users/delete/{{ .UserId }}" class="button small tertiary">Delete</a>
+          </div>
         </td>
       </tr>
     {{ end }}
