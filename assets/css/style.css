@@ -20,6 +20,8 @@ body > nav {
 body > main {
   grid-area: main;
   padding: 1rem;
+  box-sizing: border-box;
+  max-width: 100vw;
 }
 body > footer {
   grid-area: footer;
@@ -73,6 +75,10 @@ body > nav a {
 }
 
 /* Tables */
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
 table {
   border-spacing: 0;
   font-size: 1rem;
@@ -84,7 +90,6 @@ thead>tr>th {
 }
 :is(th, td) {
   inline-size: auto;
-  max-inline-size: 1rem;
   padding: 0.5rem;
   text-align: inherit;
 }
@@ -112,4 +117,9 @@ fieldset {
   gap: var(--sl-spacing-medium);
   margin: 0 0 var(--sl-spacing-medium);
   padding: 0;
+}
+@media screen and (max-width: 48rem) {
+  fieldset {
+    grid-template-columns: 1fr !important;
+  }
 }
