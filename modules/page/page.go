@@ -16,12 +16,14 @@ type Page struct {
 	Data  map[string]interface{}
 	admin *user.User
 	db    database.Database
+	errs  map[string]string
 	tpl   *template.Template
 }
 
 func New(ctx context.Context) *Page {
 	p := &Page{
 		Data: make(map[string]interface{}),
+		errs: make(map[string]string),
 	}
 
 	p.db = ctx.Value(middleware.ContextDatabase).(database.Database)
@@ -36,6 +38,10 @@ func New(ctx context.Context) *Page {
 	return p
 }
 
+func (p *Page) AddError(key, err string) {
+	p.errs[key] = err
+}
+
 func (p *Page) Admin() *user.User {
 	return p.admin
 }
@@ -45,6 +51,7 @@ func (p *Page) Database() database.Database {
 }
 
 func (p *Page) Render(w io.Writer, name string) {
+	p.Data["Errors"] = p.errs
 	p.Data["RenderedTemplate"] = name
 	if err := p.tpl.ExecuteTemplate(w, name, p.Data); err != nil {
 		fmt.Fprintf(w, "Error during execution: %v", err)
