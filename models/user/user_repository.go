@@ -124,6 +124,49 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
 	return
 }
 
+func (r *UserRepository) SetPassword(ctx context.Context, id int, pw string) (err error) {
+	query := `UPDATE users SET password = ? WHERE user_id = ?`
+	hashedPassword, err := password.Hash(pw)
+	if err != nil {
+		return fmt.Errorf("failed to hash password: %w", err)
+	}
+	_, err = r.db.ExecContext(ctx, query, hashedPassword, id)
+	return
+}
+
+type UpdateUserParams struct {
+	UserId    int
+	FirstName string
+	LastName  string
+	Email     string
+	Active    bool
+}
+
+func (r *UserRepository) UpdateUser(ctx context.Context, params UpdateUserParams) (err error) {
+	query := `
+    UPDATE users SET
+        first_name = ?,
+        last_name = ?,
+        email = ?,
+        active = ?,
+        updated_at = ?
+    WHERE user_id = ?
+    `
+
+	_, err = r.db.ExecContext(
+		ctx,
+		query,
+		params.FirstName,
+		params.LastName,
+		params.Email,
+		params.Active,
+		time.Now(),
+		params.UserId,
+	)
+
+	return
+}
+
 type UserListParams struct {
 	Page    int
 	PerPage int

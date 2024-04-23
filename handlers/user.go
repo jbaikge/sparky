@@ -3,6 +3,7 @@ package handlers
 import (
 	"log/slog"
 	"net/http"
+	"strconv"
 
 	"github.com/jbaikge/sparky/models/user"
 	"github.com/jbaikge/sparky/modules/page"
@@ -25,31 +26,53 @@ func userList(w http.ResponseWriter, r *http.Request) {
 	p.Render(w, "user/list")
 }
 
-func userAddForm(w http.ResponseWriter, r *http.Request) {
+func userForm(w http.ResponseWriter, r *http.Request) {
 	tpl := "user/form"
 
 	p := page.New(r.Context())
 	p.Data["PageActiveUsers"] = true
 	p.Data["FormAction"] = r.URL.Path
 
-	// Really important or blank records go into the database, whoops
-	if r.Method == http.MethodGet {
-		p.Data["User"] = user.User{
-			Active: true,
+	urlId := r.PathValue("id")
+	isEditing := urlId != ""
+	p.Data["IsEditing"] = isEditing
+
+	userRepo := user.NewUserRepository(p.Database())
+
+	u := &user.User{Active: true}
+
+	if isEditing {
+		id, err := strconv.Atoi(urlId)
+		if err != nil {
+			slog.Error("invalid user id", "value", urlId)
+			http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
+			return
 		}
+
+		u, err = userRepo.GetUserById(r.Context(), id)
+		if err != nil {
+			slog.Error("user does not exist", "id", id)
+			http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
+			return
+		}
+	}
+	p.Data["User"] = u
+
+	if r.Method == http.MethodGet {
 		p.Render(w, tpl)
 		return
 	}
 
-	u := user.User{
-		FirstName: r.PostFormValue("firstName"),
-		LastName:  r.PostFormValue("lastName"),
-		Email:     r.PostFormValue("email"),
-		Password:  r.PostFormValue("password"),
-		Active:    r.PostFormValue("active") == "1",
-	}
-	p.Data["User"] = u
+	// Process POST data
+	u.FirstName = r.PostFormValue("firstName")
+	u.LastName = r.PostFormValue("lastName")
+	u.Email = r.PostFormValue("email")
+	u.Active = r.PostFormValue("active") == "1"
 
+	oldPassword := u.Password
+	if newPassword := r.PostFormValue("password"); newPassword != "" {
+		u.Password = newPassword
+	}
 	for key, err := range u.Validate() {
 		p.AddError(key, err)
 	}
@@ -58,24 +81,46 @@ func userAddForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userRepo := user.NewUserRepository(p.Database())
-	params := user.CreateUserParams{
-		FirstName: u.FirstName,
-		LastName:  u.LastName,
-		Email:     u.Email,
-		Password:  u.Password,
-		Active:    u.Active,
-	}
-	slog.Debug("creating user", "params", params)
-	if _, err := userRepo.CreateUser(r.Context(), params); err != nil {
-		p.AddError("CreateUser", err.Error())
+	if isEditing {
+		params := user.UpdateUserParams{
+			UserId:    u.UserId,
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			Active:    u.Active,
+		}
+		if err := userRepo.UpdateUser(r.Context(), params); err != nil {
+			slog.Error("failed to update user", "error", err)
+			p.AddError("Database", err.Error())
+			p.Render(w, tpl)
+			return
+		}
+	} else {
+		params := user.CreateUserParams{
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			Active:    u.Active,
+		}
+		newUser, err := userRepo.CreateUser(r.Context(), params)
+		if err != nil {
+			slog.Error("failed to create user", "error", err)
+			p.AddError("Database", err.Error())
+			p.Render(w, tpl)
+			return
+		}
+		u.UserId = newUser.UserId
 	}
 
-	// Great success, go back to the user list
-	if !p.HasErrors() {
-		http.Redirect(w, r, "/admin/users", http.StatusSeeOther)
-		return
+	if oldPassword != u.Password {
+		err := userRepo.SetPassword(r.Context(), u.UserId, u.Password)
+		if err != nil {
+			slog.Error("failed to update password", "error", err)
+			p.AddError("Database", err.Error())
+			p.Render(w, tpl)
+			return
+		}
 	}
 
-	p.Render(w, tpl)
+	http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
 }
