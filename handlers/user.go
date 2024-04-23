@@ -35,6 +35,7 @@ func userAddForm(w http.ResponseWriter, r *http.Request) {
 	// Really important or blank records go into the database, whoops
 	if r.Method == http.MethodGet {
 		p.Render(w, tpl)
+		return
 	}
 
 	u := user.User{
@@ -42,6 +43,7 @@ func userAddForm(w http.ResponseWriter, r *http.Request) {
 		LastName:  r.PostFormValue("lastName"),
 		Email:     r.PostFormValue("email"),
 		Password:  r.PostFormValue("password"),
+		Active:    r.PostFormValue("active") == "1",
 	}
 	p.Data["User"] = u
 
@@ -59,6 +61,7 @@ func userAddForm(w http.ResponseWriter, r *http.Request) {
 		LastName:  u.LastName,
 		Email:     u.Email,
 		Password:  u.Password,
+		Active:    u.Active,
 	}
 	slog.Debug("creating user", "params", params)
 	if _, err := userRepo.CreateUser(r.Context(), params); err != nil {
