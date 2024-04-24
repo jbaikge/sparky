@@ -33,7 +33,7 @@ func (m *AdminUser) SetHandler(handler http.Handler) {
 func (m *AdminUser) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	// Skip user extraction for non-admin pages and the login pages
 	path := r.URL.Path
-	if !strings.HasPrefix(path, "/admin") || path == "/admin/login" || path == "/admin/login-form" {
+	if !strings.HasPrefix(path, "/admin") || strings.HasPrefix(path, "/admin/assets/") || path == "/admin/login" || path == "/admin/login-form" {
 		m.handler.ServeHTTP(w, r)
 		return
 	}

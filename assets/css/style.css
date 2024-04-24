@@ -2,6 +2,8 @@
 body {
   font-family: var(--sl-font-sans);
   margin: 0;
+}
+.main-grid {
   min-height: 100vh;
   display: grid;
   grid-template-rows: min-content min-content auto min-content;
@@ -11,23 +13,23 @@ body {
     "main"
     "footer";
 }
-body > header {
+.main-grid > header {
   grid-area: header;
 }
-body > nav {
+.main-grid > nav {
   grid-area: nav;
 }
-body > main {
+.main-grid > main {
   grid-area: main;
   padding: 1rem;
   box-sizing: border-box;
   max-width: 100vw;
 }
-body > footer {
+.main-grid > footer {
   grid-area: footer;
 }
 @media (min-width: 48em) {
-  body {
+  .main-grid {
     grid-template-columns: 10em 3fr;
     grid-template-rows: min-content minmax(0, 1fr) min-content;
     grid-template-areas:
@@ -38,38 +40,38 @@ body > footer {
 }
 
 /* Main header */
-body > header {
+.main-grid > header {
   background-color: var(--sl-color-neutral-100);
   padding: 0.5rem 1rem;
   display: flex;
   align-items: center;
 }
-body > header sl-icon-button {
+.main-grid > header sl-icon-button {
   font-size: var(--sl-font-size-2x-large);
 }
-body > header h1 {
+.main-grid > header h1 {
   margin: 0;
 }
-body > header .avatar {
+.main-grid > header .avatar {
   flex-grow: 1;
   display: flex;
   justify-content: flex-end;
 }
 
 /* Main Navigation */
-body > nav {
+.main-grid > nav {
   background-color: var(--sl-color-neutral-100);
 }
-body > nav ol {
+.main-grid > nav ol {
   list-style: none;
   margin: 0;
   padding: 0;
 }
-body > nav .active a {
+.main-grid > nav .active a {
   background: var(--sl-color-neutral-300);
   color: var(--sl-color-neutral-700);
 }
-body > nav a {
+.main-grid > nav a {
   display: block;
   padding: 0.25rem 1rem;
 }
@@ -110,6 +112,9 @@ main > header {
 }
 
 /* Forms */
+sl-alert:has(+ form) {
+  margin-bottom: var(--sl-spacing-2x-large);
+}
 fieldset {
   align-items: center;
   border: 0;
@@ -117,6 +122,9 @@ fieldset {
   gap: var(--sl-spacing-medium);
   margin: 0 0 var(--sl-spacing-medium);
   padding: 0;
+}
+form sl-button-group {
+  margin-top: var(--sl-spacing-2x-large);
 }
 @media screen and (max-width: 48rem) {
   fieldset {

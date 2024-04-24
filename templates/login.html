@@ -1,31 +1,12 @@
-{{ define "login" -}}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Login | Sparky</title>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.css">
-  </head>
-  <body class="center-align middle-align" style="min-height: 100vh;">
-    <main>
-      {{ template "login-form" . }}
-    </main>
-    <script>
-      function setColorScheme(e) {
-        const body = document.querySelector("body");
-        if (e.matches) {
-          body.classList.add("dark");
-        } else {
-          body.classList.remove("dark");
-        }
-      }
-      const darkModePreference = window.matchMedia("(prefers-color-scheme: dark)");
-      darkModePreference.addEventListener("change", setColorScheme);
-      setColorScheme(darkModePreference);
-    </script>
-    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
-    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.5.1/dist/cdn/beer.min.js"></script>
-  </body>
-</html>
-{{- end }}
+{{ define "login" }}
+{{- template "header" . }}
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center;">
+      <sl-card style="width: 20rem;">
+        <div slot="header">
+          <h2>Sparky</h2>
+        </div>
+        {{ template "login-form" . }}
+      </sl-card>
+    </div>
+{{ template "footer" . -}}
+{{ end }}
