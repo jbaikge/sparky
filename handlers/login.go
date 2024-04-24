@@ -17,6 +17,7 @@ import (
 
 func adminLogin(w http.ResponseWriter, r *http.Request) {
 	p := page.New(r.Context())
+	w.Header().Add("HX-Redirect", "/admin/login")
 	p.Data["Title"] = "Login"
 	p.Render(w, "login")
 }
