@@ -19,6 +19,7 @@ type Page struct {
 	errs  map[string]string
 	tpl   *template.Template
 	htmx  bool
+	wrap  bool
 }
 
 func New(ctx context.Context) *Page {
@@ -28,6 +29,8 @@ func New(ctx context.Context) *Page {
 	}
 
 	p.htmx = ctx.Value(middleware.ContextHTMX).(bool)
+	p.wrap = !p.htmx
+
 	p.db = ctx.Value(middleware.ContextDatabase).(database.Database)
 	p.tpl = ctx.Value(middleware.ContextTemplate).(*template.Template)
 	if admin := ctx.Value(middleware.ContextAdminUser); admin != nil {
@@ -56,17 +59,22 @@ func (p *Page) HasErrors() bool {
 	return len(p.errs) > 0
 }
 
+func (p *Page) SetAutoWrap(wrap bool) {
+	p.wrap = wrap
+}
+
 func (p *Page) Render(w io.Writer, templateName string) {
 	p.Data["Errors"] = p.errs
 	p.Data["RenderedTemplate"] = templateName
 
-	render := []string{
-		"page/header",
-		templateName,
-		"page/footer",
-	}
-	if p.htmx {
-		render = render[1:2]
+	// reduce allocations by only using a single slice
+	render := make([]string, 1, 3)
+	render[0] = templateName
+
+	// whether to wrap the desired template in the page header and footer
+	if p.wrap {
+		render[0] = "page/header"
+		render = append(render, templateName, "page/footer")
 	}
 
 	for _, name := range render {
