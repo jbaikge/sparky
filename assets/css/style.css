@@ -29,7 +29,7 @@ body > footer {
 @media (min-width: 48em) {
   body {
     grid-template-columns: 10em 3fr;
-    grid-template-rows: min-content auto min-content;
+    grid-template-rows: min-content minmax(0, 1fr) min-content;
     grid-template-areas:
       "header header"
       "nav    main"
