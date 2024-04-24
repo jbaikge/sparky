@@ -81,35 +81,11 @@ func userForm(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if isEditing {
-		params := user.UpdateUserParams{
-			UserId:    u.UserId,
-			FirstName: u.FirstName,
-			LastName:  u.LastName,
-			Email:     u.Email,
-			Active:    u.Active,
-		}
-		if err := userRepo.UpdateUser(r.Context(), params); err != nil {
-			slog.Error("failed to update user", "error", err)
-			p.AddError("Database", err.Error())
-			p.Render(w, tpl)
-			return
-		}
-	} else {
-		params := user.CreateUserParams{
-			FirstName: u.FirstName,
-			LastName:  u.LastName,
-			Email:     u.Email,
-			Active:    u.Active,
-		}
-		newUser, err := userRepo.CreateUser(r.Context(), params)
-		if err != nil {
-			slog.Error("failed to create user", "error", err)
-			p.AddError("Database", err.Error())
-			p.Render(w, tpl)
-			return
-		}
-		u.UserId = newUser.UserId
+	if err := userRepo.UpsertUser(r.Context(), u); err != nil {
+		slog.Error("failed to upsert user", "id", u.UserId, "error", err)
+		p.AddError("Database", err.Error())
+		p.Render(w, tpl)
+		return
 	}
 
 	if oldPassword != u.Password {

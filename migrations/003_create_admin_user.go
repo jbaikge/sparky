@@ -16,16 +16,22 @@ func init() {
 
 func migrateCreateAdministrator(ctx context.Context, db database.Database) error {
 	repo := user.NewUserRepository(db)
-	params := user.CreateUserParams{
+
+	u := &user.User{
 		FirstName: "Super",
 		LastName:  "Administrator",
 		Email:     "admin@sparky.lan",
-		Password:  password.TemporaryPassword(16),
 		Active:    true,
 	}
-	if _, err := repo.CreateUser(ctx, params); err != nil {
+	if err := repo.CreateUser(ctx, u); err != nil {
 		return fmt.Errorf("failed to create administrator: %w", err)
 	}
-	slog.Warn("created Super Administrator", "email", params.Email, "password", params.Password)
+
+	pw := password.TemporaryPassword(16)
+	if err := repo.SetPassword(ctx, u.UserId, pw); err != nil {
+		return fmt.Errorf("failed to set administrator password: %w", err)
+	}
+
+	slog.Warn("created Super Administrator", "email", u.Email, "password", pw)
 	return nil
 }

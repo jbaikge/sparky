@@ -12,8 +12,6 @@ type User struct {
 	LastName  string
 	Email     string
 	Password  string
-	StartDate time.Time
-	EndDate   time.Time
 	Active    bool
 	CreatedAt time.Time
 	UpdatedAt time.Time

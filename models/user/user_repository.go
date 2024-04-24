@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 	"time"
 
@@ -20,55 +19,47 @@ func NewUserRepository(db database.Database) *UserRepository {
 	}
 }
 
-type CreateUserParams struct {
-	FirstName string
-	LastName  string
-	Email     string
-	Password  string
-	Active    bool
-}
-
-func (r *UserRepository) CreateUser(ctx context.Context, arg CreateUserParams) (user *User, err error) {
+// Creates a new user in the repository, side effects:
+// - Sets the UserID after insertion
+// - Sets CreatedAt to the current time
+// - Sets UpdatedAt to the same value as CreatedAt
+// - Does NOT set the password, use SetPassword for that
+func (r *UserRepository) CreateUser(ctx context.Context, u *User) (err error) {
 	query := `
     INSERT INTO users (
         first_name,
         last_name,
         email,
-        password,
-        start_date,
         active,
         created_at,
         updated_at
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ) VALUES (?, ?, ?, ?, ?, ?)
     `
-	hashedPassword, err := password.Hash(arg.Password)
-	if err != nil {
-		return nil, fmt.Errorf("failed to hash password: %w", err)
-	}
 
 	now := time.Now()
+	u.CreatedAt = now
+	u.UpdatedAt = now
 	result, err := r.db.ExecContext(
 		ctx,
 		query,
-		arg.FirstName,
-		arg.LastName,
-		arg.Email,
-		hashedPassword,
-		now.Format("2006-01-02"),
-		arg.Active,
-		now,
-		now,
+		u.FirstName,
+		u.LastName,
+		u.Email,
+		u.Active,
+		u.CreatedAt,
+		u.UpdatedAt,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create user: %w", err)
+		return fmt.Errorf("failed to create user: %w", err)
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
-		return nil, fmt.Errorf("failed to get ID of created user: %w", err)
+		return fmt.Errorf("failed to get ID of created user: %w", err)
 	}
 
-	return r.GetUserById(ctx, int(id))
+	u.UserId = int(id)
+	return
 }
 
 func (r *UserRepository) GetUserByEmail(ctx context.Context, email string) (user *User, err error) {
@@ -90,8 +81,6 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
         last_name,
         email,
         password,
-        start_date,
-        end_date,
         active,
         created_at,
         updated_at
@@ -100,25 +89,18 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
     `
 
 	user = new(User)
-	var endDate sql.NullTime
 	err = r.db.QueryRowContext(ctx, query, id).Scan(
 		&user.UserId,
 		&user.FirstName,
 		&user.LastName,
 		&user.Email,
 		&user.Password,
-		&user.StartDate,
-		&endDate,
 		&user.Active,
 		&user.CreatedAt,
 		&user.UpdatedAt,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user by id: %w", err)
-	}
-
-	if endDate.Valid {
-		user.EndDate = endDate.Time
 	}
 
 	return
@@ -134,15 +116,7 @@ func (r *UserRepository) SetPassword(ctx context.Context, id int, pw string) (er
 	return
 }
 
-type UpdateUserParams struct {
-	UserId    int
-	FirstName string
-	LastName  string
-	Email     string
-	Active    bool
-}
-
-func (r *UserRepository) UpdateUser(ctx context.Context, params UpdateUserParams) (err error) {
+func (r *UserRepository) UpdateUser(ctx context.Context, u *User) (err error) {
 	query := `
     UPDATE users SET
         first_name = ?,
@@ -153,18 +127,26 @@ func (r *UserRepository) UpdateUser(ctx context.Context, params UpdateUserParams
     WHERE user_id = ?
     `
 
+	u.UpdatedAt = time.Now()
 	_, err = r.db.ExecContext(
 		ctx,
 		query,
-		params.FirstName,
-		params.LastName,
-		params.Email,
-		params.Active,
-		time.Now(),
-		params.UserId,
+		u.FirstName,
+		u.LastName,
+		u.Email,
+		u.Active,
+		u.UpdatedAt,
+		u.UserId,
 	)
 
 	return
+}
+
+func (r *UserRepository) UpsertUser(ctx context.Context, u *User) (err error) {
+	if u.UserId == 0 {
+		return r.CreateUser(ctx, u)
+	}
+	return r.UpdateUser(ctx, u)
 }
 
 type UserListParams struct {
@@ -187,8 +169,6 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
         first_name,
         last_name,
         email,
-        start_date,
-        end_date,
         active,
         created_at,
         updated_at
@@ -200,7 +180,6 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
     LIMIT ? OFFSET ?
     `
 
-	var endDate sql.NullTime
 	rows, err := r.db.QueryContext(ctx, query, params.Limit(), params.Offset())
 	if err != nil {
 		return nil, fmt.Errorf("database error: %w", err)
@@ -214,17 +193,12 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
 			&i.FirstName,
 			&i.LastName,
 			&i.Email,
-			&i.StartDate,
-			&endDate,
 			&i.Active,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("scan error: %w", err)
-		}
-		if endDate.Valid {
-			i.EndDate = endDate.Time
 		}
 		items = append(items, i)
 	}
