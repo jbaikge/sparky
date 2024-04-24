@@ -59,6 +59,7 @@ func main() {
 		app.AddMiddleware(middleware.NewEmbeddedTemplate(srcFS, "templates"))
 	}
 
+	app.AddMiddleware(middleware.NewHTMX())
 	app.AddMiddleware(middleware.NewDatabase(db))
 	app.AddMiddleware(middleware.NewAdminHandler(db))
 	app.AddMiddleware(middleware.NewContentType())

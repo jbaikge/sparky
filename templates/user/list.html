@@ -2,7 +2,7 @@
 <header>
   <h2>Users</h2>
   <sl-button-group class="header-buttons">
-    <sl-button hx-get="/admin/htmx/users/add" hx-push-url="/admin/users/add">Add User</sl-button>
+    <sl-button hx-get="/admin/users/add">Add User</sl-button>
   </sl-button-group>
 </header>
 <div class="table-scroll">
@@ -25,8 +25,8 @@
           <td>{{ if .Active }}<sl-icon name="check-lg" label="Active user" style="color: var(--sl-color-success-500);"></sl-icon>{{ end }}</td>
           <td>
             <sl-button-group>
-              <sl-button hx-get="/admin/htmx/users/edit/{{ .UserId }}" hx-push-url="/admin/users/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
-              <sl-button hx-get="/admin/htmx/users/delete/{{ .UserId }}" hx-push-url="/admin/users/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
+              <sl-button hx-get="/admin/users/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
+              <sl-button hx-get="/admin/users/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
             </sl-button-group>
           </td>
         </tr>

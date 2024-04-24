@@ -13,14 +13,13 @@ type Mux interface {
 func Apply(mux Mux) {
 	mux.HandleFunc("GET /admin/login", adminLogin)
 	mux.HandleFunc("POST /admin/login", adminLoginAuth)
-	mux.HandleFunc("GET /admin/{path...}", base)
-	mux.HandleFunc("GET /admin/htmx/dashboard", dashboard)
-	mux.HandleFunc("GET /admin/htmx/users/list", userList)
-	mux.HandleFunc("GET /admin/htmx/users/list/{page}", userList)
-	mux.HandleFunc("GET /admin/htmx/users/add", userForm)
-	mux.HandleFunc("POST /admin/htmx/users/add", userForm)
-	mux.HandleFunc("GET /admin/htmx/users/edit/{id}", userForm)
-	mux.HandleFunc("POST /admin/htmx/users/edit/{id}", userForm)
+	mux.HandleFunc("GET /admin/dashboard", dashboard)
+	mux.HandleFunc("GET /admin/users/list", userList)
+	mux.HandleFunc("GET /admin/users/list/{page}", userList)
+	mux.HandleFunc("GET /admin/users/add", userForm)
+	mux.HandleFunc("POST /admin/users/add", userForm)
+	mux.HandleFunc("GET /admin/users/edit/{id}", userForm)
+	mux.HandleFunc("POST /admin/users/edit/{id}", userForm)
 }
 
 func Assets(mux Mux, path string) {

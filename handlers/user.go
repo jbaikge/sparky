@@ -45,14 +45,14 @@ func userForm(w http.ResponseWriter, r *http.Request) {
 		id, err := strconv.Atoi(urlId)
 		if err != nil {
 			slog.Error("invalid user id", "value", urlId)
-			redirect(w, r, "/admin/users/list")
+			http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
 			return
 		}
 
 		u, err = userRepo.GetUserById(r.Context(), id)
 		if err != nil {
 			slog.Error("user does not exist", "id", id)
-			redirect(w, r, "/admin/users/list")
+			http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
 			return
 		}
 	}
@@ -98,5 +98,5 @@ func userForm(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	redirect(w, r, "/admin/users/list")
+	http.Redirect(w, r, "/admin/users/list", http.StatusSeeOther)
 }

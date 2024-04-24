@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/light.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/themes/dark.css">
   </head>
-  <body hx-ext="shoelace">
+  <body hx-ext="shoelace" hx-push-url="true">
 {{ end }}
 
 {{ define "footer" }}
@@ -22,7 +22,7 @@
 </html>
 {{- end }}
 
-{{ define "base" }}
+{{ define "page/header" }}
 {{- template "header" . }}
     <div class="main-grid">
       <header>
@@ -32,18 +32,16 @@
       </header>
       <nav>
         <ol hx-target="main">
-          <li{{ if .PageActiveDashboard }} class="active"{{ end }}>
-            <a hx-get="/admin/htmx/dashboard" hx-push-url="/admin/dashboard">Dashboard</a>
-          </li>
-          <li{{ if .PageActiveEvents }} class="active"{{ end }}>
-            <a hx-get="/admin/htmx/events">Events</a>
-          </li>
-          <li{{ if .PageActiveUsers }} class="active"{{ end }}>
-            <a hx-get="/admin/htmx/users/list" hx-push-url="/admin/users/list">Users</a>
-          </li>
+          <li><a hx-get="/admin/dashboard">Dashboard</a></li>
+          <li><a hx-get="/admin/events">Events</a></li>
+          <li><a hx-get="/admin/users/list">Users</a></li>
         </ol>
       </nav>
-      <main hx-get="{{ .Path }}" hx-target="this" hx-trigger="load" hx-history-elt></main>
+      <main hx-target="this" hx-history-elt>
+{{ end }}
+
+{{ define "page/footer" }}
+      </main>
       <footer>
         Footer diagnostics
       </footer>
