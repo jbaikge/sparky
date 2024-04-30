@@ -14,14 +14,6 @@
   <body hx-ext="shoelace" hx-push-url="true">
 {{ end }}
 
-{{ define "footer" }}
-    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace.js"></script>
-    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
-    <script src="/admin/assets/js/htmx.ext.shoelace.js"></script>
-  </body>
-</html>
-{{- end }}
-
 {{ define "page/header" }}
 {{- template "header" . }}
     <div class="main-grid">
@@ -34,6 +26,7 @@
         <ol hx-target="main">
           <li><a hx-get="/admin/dashboard">Dashboard</a></li>
           <li><a hx-get="/admin/events">Events</a></li>
+          <li><a hx-get="/admin/templates">Templates</a></li>
           <li><a hx-get="/admin/users/list">Users</a></li>
         </ol>
       </nav>
@@ -48,3 +41,11 @@
     </div>
 {{ template "footer" . -}}
 {{ end }}
+
+{{ define "footer" }}
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.15.0/cdn/shoelace.js"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <script src="/admin/assets/js/htmx.ext.shoelace.js"></script>
+  </body>
+</html>
+{{- end }}
