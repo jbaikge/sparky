@@ -18,7 +18,7 @@ CREATE TABLE schema_versions (
     version INTEGER NOT NULL PRIMARY KEY,
     success INTEGER NOT NULL DEFAULT FALSE,
     note TEXT,
-    applied TEXT
+    applied INTEGER
 )
 `
 
@@ -47,9 +47,9 @@ func (m *sqliteMigrater) CreateTable(ctx context.Context, db database.Database) 
         INSERT INTO schema_versions
             (version, success, note, applied)
         VALUES
-            (?, 1, 'Create schema_versions table', ?)
+            (?, 1, 'Create schema_versions table', unixepoch())
     `
-	_, err = db.ExecContext(ctx, init, CreateSchemaVersions, time.Now())
+	_, err = db.ExecContext(ctx, init, CreateSchemaVersions)
 	return
 }
 

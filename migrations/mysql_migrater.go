@@ -17,7 +17,7 @@ CREATE TABLE schema_versions (
     version INT UNSIGNED NOT NULL PRIMARY KEY,
     success BOOLEAN NOT NULL DEFAULT FALSE,
     note VARCHAR(255) NOT NULL DEFAULT '',
-    created_at TIMESTAMP(6) DEFAULT CURRENT_TIMESTAMP()
+    created_at BIGINT(20) NOT NULL DEFAULT 0
 )
 `
 
@@ -44,9 +44,9 @@ func (m *mysqlMigrater) CreateTable(ctx context.Context, db database.Database) (
 
 	init := `
         INSERT INTO schema_versions
-            (version, success, note)
+            (version, success, note, created_at)
         VALUES
-            (?, 1, 'Create schema_versions table')
+            (?, 1, 'Create schema_versions table', UNIX_TIMESTAMP())
     `
 	_, err = db.ExecContext(ctx, init, CreateSchemaVersions)
 	return

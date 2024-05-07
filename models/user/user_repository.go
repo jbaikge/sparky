@@ -46,8 +46,8 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *User) (err error) {
 		u.LastName,
 		u.Email,
 		u.Active,
-		u.CreatedAt,
-		u.UpdatedAt,
+		u.CreatedAt.Unix(),
+		u.UpdatedAt.Unix(),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create user: %w", err)
@@ -89,6 +89,7 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
     `
 
 	user = new(User)
+	var created, updated int64
 	err = r.db.QueryRowContext(ctx, query, id).Scan(
 		&user.UserId,
 		&user.FirstName,
@@ -96,13 +97,23 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
 		&user.Email,
 		&user.Password,
 		&user.Active,
-		&user.CreatedAt,
-		&user.UpdatedAt,
+		&created,
+		&updated,
 	)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get user by id: %w", err)
 	}
 
+	user.CreatedAt = time.Unix(created, 0)
+	user.UpdatedAt = time.Unix(updated, 0)
+
+	return
+}
+
+func (r *UserRepository) SetLastLogin(ctx context.Context, u *User) (err error) {
+	query := `UPDATE users SET last_login = ? WHERE user_id = ?`
+	u.LastLogin = time.Now()
+	_, err = r.db.ExecContext(ctx, query, u.LastLogin.Unix(), u.UserId)
 	return
 }
 
@@ -135,7 +146,7 @@ func (r *UserRepository) UpdateUser(ctx context.Context, u *User) (err error) {
 		u.LastName,
 		u.Email,
 		u.Active,
-		u.UpdatedAt,
+		u.UpdatedAt.Unix(),
 		u.UserId,
 	)
 
@@ -170,6 +181,7 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
         last_name,
         email,
         active,
+        last_login,
         created_at,
         updated_at
     FROM
@@ -185,6 +197,7 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
 		return nil, fmt.Errorf("database error: %w", err)
 	}
 
+	var lastLogin, created, updated int64
 	items = make([]*User, 0, params.Limit())
 	for rows.Next() {
 		i := new(User)
@@ -194,12 +207,16 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
 			&i.LastName,
 			&i.Email,
 			&i.Active,
-			&i.CreatedAt,
-			&i.UpdatedAt,
+			&lastLogin,
+			&created,
+			&updated,
 		)
 		if err != nil {
 			return nil, fmt.Errorf("scan error: %w", err)
 		}
+		i.LastLogin = time.Unix(lastLogin, 0)
+		i.CreatedAt = time.Unix(created, 0)
+		i.UpdatedAt = time.Unix(updated, 0)
 		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {

@@ -13,6 +13,7 @@ type User struct {
 	Email     string
 	Password  string
 	Active    bool
+	LastLogin time.Time
 	CreatedAt time.Time
 	UpdatedAt time.Time
 }
