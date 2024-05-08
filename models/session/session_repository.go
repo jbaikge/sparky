@@ -27,9 +27,12 @@ func (r *SessionRepository) NewSession(ctx context.Context, userId int) (session
     INSERT INTO user_sessions (session_id, user_id, created_at, expires_at) VALUES (?, ?, ?, ?)
     `
 
+	createdTime := time.Now()
+	expiresTime := createdTime.Add(SessionDuration)
+	created := createdTime.UnixMicro()
+	expires := expiresTime.UnixMicro()
+
 	sessionId = uuid.NewString()
-	created := time.Now()
-	expires := created.Add(SessionDuration)
 	_, err = r.db.ExecContext(ctx, query, sessionId, userId, created, expires)
 	return
 }
@@ -41,13 +44,13 @@ func (r *SessionRepository) Extend(ctx context.Context, sessionId string) error 
     SELECT expires_at FROM user_sessions WHERE session_id = ?
     `
 
-	var expires time.Time
+	var expires int64
 	err := r.db.QueryRowContext(ctx, selectQuery, sessionId).Scan(&expires)
 	if err != nil {
 		return err
 	}
 
-	if expires.Sub(time.Now()) > SessionDuration/2 {
+	if time.UnixMicro(expires).Sub(time.Now()) > SessionDuration/2 {
 		return nil
 	}
 
@@ -70,7 +73,7 @@ func (r *SessionRepository) IsValid(ctx context.Context, sessionId string) (vali
     SELECT user_id, expires_at FROM user_sessions WHERE session_id = ?
     `
 
-	var expires time.Time
+	var expires int64
 	err = r.db.QueryRowContext(ctx, query, sessionId).Scan(&valid.UserId, &expires)
 	if errors.Is(err, sql.ErrNoRows) {
 		return valid, nil
@@ -79,6 +82,6 @@ func (r *SessionRepository) IsValid(ctx context.Context, sessionId string) (vali
 		return
 	}
 
-	valid.Valid = expires.After(time.Now())
+	valid.Valid = time.UnixMicro(expires).After(time.Now())
 	return
 }

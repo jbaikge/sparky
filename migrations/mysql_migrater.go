@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/jbaikge/sparky/modules/database"
 )
@@ -46,9 +47,9 @@ func (m *mysqlMigrater) CreateTable(ctx context.Context, db database.Database) (
         INSERT INTO schema_versions
             (version, success, note, created_at)
         VALUES
-            (?, 1, 'Create schema_versions table', UNIX_TIMESTAMP())
+            (?, 1, 'Create schema_versions table', ?)
     `
-	_, err = db.ExecContext(ctx, init, CreateSchemaVersions)
+	_, err = db.ExecContext(ctx, init, CreateSchemaVersions, time.Now().UnixMicro())
 	return
 }
 
@@ -66,8 +67,8 @@ func (m *mysqlMigrater) CurrentVersion(ctx context.Context, db database.Database
 
 // Start implements migrator.
 func (m *mysqlMigrater) Start(ctx context.Context, db database.Database, migration Migration) (err error) {
-	query := `INSERT IGNORE INTO schema_versions (version, note) VALUES (?, ?)`
-	_, err = db.ExecContext(ctx, query, migration.Version, migration.Note)
+	query := `INSERT IGNORE INTO schema_versions (version, note, created_at) VALUES (?, ?, ?)`
+	_, err = db.ExecContext(ctx, query, migration.Version, migration.Note, time.Now().UnixMicro())
 	return
 }
 

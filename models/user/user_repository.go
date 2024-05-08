@@ -46,8 +46,8 @@ func (r *UserRepository) CreateUser(ctx context.Context, u *User) (err error) {
 		u.LastName,
 		u.Email,
 		u.Active,
-		u.CreatedAt.Unix(),
-		u.UpdatedAt.Unix(),
+		u.CreatedAt.UnixMicro(),
+		u.UpdatedAt.UnixMicro(),
 	)
 	if err != nil {
 		return fmt.Errorf("failed to create user: %w", err)
@@ -104,8 +104,8 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
 		return nil, fmt.Errorf("failed to get user by id: %w", err)
 	}
 
-	user.CreatedAt = time.Unix(created, 0)
-	user.UpdatedAt = time.Unix(updated, 0)
+	user.CreatedAt = time.UnixMicro(created)
+	user.UpdatedAt = time.UnixMicro(updated)
 
 	return
 }
@@ -113,7 +113,7 @@ func (r *UserRepository) GetUserById(ctx context.Context, id int) (user *User, e
 func (r *UserRepository) SetLastLogin(ctx context.Context, u *User) (err error) {
 	query := `UPDATE users SET last_login = ? WHERE user_id = ?`
 	u.LastLogin = time.Now()
-	_, err = r.db.ExecContext(ctx, query, u.LastLogin.Unix(), u.UserId)
+	_, err = r.db.ExecContext(ctx, query, u.LastLogin.UnixMicro(), u.UserId)
 	return
 }
 
@@ -146,7 +146,7 @@ func (r *UserRepository) UpdateUser(ctx context.Context, u *User) (err error) {
 		u.LastName,
 		u.Email,
 		u.Active,
-		u.UpdatedAt.Unix(),
+		u.UpdatedAt.UnixMicro(),
 		u.UserId,
 	)
 
@@ -214,9 +214,9 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
 		if err != nil {
 			return nil, fmt.Errorf("scan error: %w", err)
 		}
-		i.LastLogin = time.Unix(lastLogin, 0)
-		i.CreatedAt = time.Unix(created, 0)
-		i.UpdatedAt = time.Unix(updated, 0)
+		i.LastLogin = time.UnixMicro(lastLogin)
+		i.CreatedAt = time.UnixMicro(created)
+		i.UpdatedAt = time.UnixMicro(updated)
 		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {

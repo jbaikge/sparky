@@ -47,9 +47,9 @@ func (m *sqliteMigrater) CreateTable(ctx context.Context, db database.Database) 
         INSERT INTO schema_versions
             (version, success, note, applied)
         VALUES
-            (?, 1, 'Create schema_versions table', unixepoch())
+            (?, 1, 'Create schema_versions table', ?)
     `
-	_, err = db.ExecContext(ctx, init, CreateSchemaVersions)
+	_, err = db.ExecContext(ctx, init, CreateSchemaVersions, time.Now().UnixMicro())
 	return
 }
 
@@ -68,7 +68,7 @@ func (m *sqliteMigrater) CurrentVersion(ctx context.Context, db database.Databas
 // Start implements migrator.
 func (m *sqliteMigrater) Start(ctx context.Context, db database.Database, migration Migration) (err error) {
 	query := `INSERT OR IGNORE INTO schema_versions (version, note, applied) VALUES (?, ?, ?)`
-	_, err = db.ExecContext(ctx, query, migration.Version, migration.Note, time.Now())
+	_, err = db.ExecContext(ctx, query, migration.Version, migration.Note, time.Now().UnixMicro())
 	return
 }
 
