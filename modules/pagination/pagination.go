@@ -62,29 +62,30 @@ func (p Pagination) Links() (links []Link) {
 		Query: query,
 	})
 
-	windowPages := p.windowPages()
+	if windowPages := p.windowPages(); len(windowPages) > 0 {
 
-	// Gap, if necessary
-	if windowPages[0] > 2 {
-		links = append(links, Link{
-			IsGap: true,
-		})
-	}
+		// Gap, if necessary
+		if windowPages[0] > 2 {
+			links = append(links, Link{
+				IsGap: true,
+			})
+		}
 
-	// Window pages
-	for _, page := range windowPages {
-		links = append(links, Link{
-			Page:  page,
-			Query: query,
-		})
-	}
+		// Window pages
+		for _, page := range windowPages {
+			links = append(links, Link{
+				Page:  page,
+				Query: query,
+			})
+		}
 
-	// Gap, if necessary
-	if windowPages[len(windowPages)-1]+1 < lastPage {
-		links = append(links, Link{
-			IsGap: true,
-			Query: query,
-		})
+		// Gap, if necessary
+		if windowPages[len(windowPages)-1]+1 < lastPage {
+			links = append(links, Link{
+				IsGap: true,
+				Query: query,
+			})
+		}
 	}
 
 	// Last page
