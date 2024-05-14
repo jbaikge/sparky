@@ -181,3 +181,51 @@ func TestWindow(t *testing.T) {
 		}
 	}
 }
+
+func TestLinksSinglePage(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/test", nil)
+	p := NewPagination(r)
+	p.SetTotal(defaultPerPage)
+	if num := len(p.Links()); num != 0 {
+		t.Fatalf("expected zero links, got %d", num)
+	}
+}
+
+func TestLinksWindowed(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/test?p=6&pp=10", nil)
+	p := NewPagination(r)
+	p.SetTotal(200)
+	links := p.Links()
+
+	// Prev + 1 + gap + shoulder + 1 + shoulder + gap + last + next = 11
+	if num := len(links); num != 11 {
+		t.Fatalf("expected 11 links, got %d", num)
+	}
+
+	if !links[0].IsPrev {
+		t.Fatal("links[0] is not a previous link")
+	}
+	if links[0].Page != 5 {
+		t.Fatal("links[0] is not page 5")
+	}
+	if links[1].Page != 1 {
+		t.Fatal("links[1] is not page 1")
+	}
+	if !links[2].IsGap {
+		t.Fatal("links[2] is not a gap")
+	}
+	for i, link := range links[3:8] {
+		if link.Page != i+4 {
+			t.Fatalf("links[%d] is not page %d", i+3, i+4)
+		}
+	}
+	if !links[8].IsGap {
+		t.Fatal("links[8] is not a gap")
+	}
+	if links[9].Page != 20 {
+		t.Fatal("links[0] is not page 20")
+	}
+	if !links[10].IsNext {
+		t.Fatal("links[10] is not a next link")
+	}
+}
