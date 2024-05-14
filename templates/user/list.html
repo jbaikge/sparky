@@ -5,7 +5,7 @@
     <sl-button hx-get="/admin/users/add">Add User</sl-button>
   </sl-button-group>
 </header>
-{{ template "modules/pagination" . }}
+{{ template "modules/pagination" .Params.Pagination }}
 <div class="table-scroll">
   <table>
     <thead>
