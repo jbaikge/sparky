@@ -37,6 +37,10 @@ func (link Link) IsDisabled(page int) bool {
 	return false
 }
 
+func (link Link) IsNumber() bool {
+	return !link.IsGap && !link.IsPrev && !link.IsNext
+}
+
 func (link Link) URL() string {
 	if link.Query == nil {
 		return fmt.Sprintf("?p=%d", link.Page)
