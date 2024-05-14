@@ -131,3 +131,11 @@ form sl-button-group {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Pagination */
+nav.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--sl-spacing-2x-large);
+  margin-bottom: var(--sl-spacing-2x-large);
+}

@@ -1,19 +1,17 @@
 {{ define "modules/pagination" }}
 {{ $page := .Current }}
 {{ with .Links }}
-<nav aria-label="pagination">
-  <ul class="pagination">
-    {{ range . }}
-      <li class="page-item {{- if .IsDisabled $page  }} disabled{{ end }} {{- if .IsActive $page }} active{{ end }}">
-        <a hx-get="{{ .URL }}" href="{{ .URL }}" class="page-link">
+  <nav class="pagination">
+    <sl-button-group label="Pagination">
+      {{ range . }}
+        <sl-button hx-get="{{ .URL }}" {{- if .IsActive $page }} variant="neutral"{{ end }} {{- if .IsDisabled $page }} disabled{{ end }}>
           {{- if .IsPrev }}Previous{{ end -}}
           {{- if .IsNext }}Next{{ end -}}
           {{- if .IsGap }}&ellipsis;{{ end -}}
           {{- if .IsNumber }}{{ .Page }}{{ end -}}
-        </a>
-      </li>
-    {{ end }}
-  </ul>
-</nav>
+        </sl-button>
+      {{ end }}
+    </sl-button-group>
+  </nav>
 {{ end }}
 {{ end }}
