@@ -160,20 +160,7 @@ func (r *UserRepository) UpsertUser(ctx context.Context, u *User) (err error) {
 	return r.UpdateUser(ctx, u)
 }
 
-type UserListParams struct {
-	Page    int
-	PerPage int
-}
-
-func (p UserListParams) Limit() int {
-	return p.PerPage
-}
-
-func (p UserListParams) Offset() int {
-	return (p.Page - 1) * p.PerPage
-}
-
-func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (items []*User, err error) {
+func (r *UserRepository) UserList(ctx context.Context, params *UserListParams) (items []*User, err error) {
 	query := `
     SELECT
         user_id,
@@ -192,13 +179,18 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
     LIMIT ? OFFSET ?
     `
 
-	rows, err := r.db.QueryContext(ctx, query, params.Limit(), params.Offset())
+	rows, err := r.db.QueryContext(
+		ctx,
+		query,
+		params.Pagination.PerPage(),
+		params.Pagination.Offset(),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("database error: %w", err)
 	}
 
 	var lastLogin, created, updated int64
-	items = make([]*User, 0, params.Limit())
+	items = make([]*User, 0, params.Pagination.PerPage())
 	for rows.Next() {
 		i := new(User)
 		err = rows.Scan(
@@ -225,6 +217,13 @@ func (r *UserRepository) UserList(ctx context.Context, params UserListParams) (i
 	if err := rows.Err(); err != nil {
 		return nil, fmt.Errorf("error during row traversal: %w", err)
 	}
+
+	countQuery := `SELECT COUNT(1) FROM users`
+	var total int
+	if err = r.db.QueryRowContext(ctx, countQuery).Scan(&total); err != nil {
+		return nil, fmt.Errorf("failed to count: %w", err)
+	}
+	params.Pagination.SetTotal(total)
 
 	return
 }

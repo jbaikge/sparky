@@ -1,0 +1,17 @@
+{{ define "modules/pagination" }}
+<nav aria-label="pagination">
+  <ul class="pagination">
+    {{ $page := .Current }}
+    {{ range .Links }}
+      <li class="page-item {{- if .IsDisabled $page  }} disabled{{ end }} {{- if .IsActive $page }} active{{ end }}">
+        <a href="{{ .URL }}" class="page-link">
+          {{- if .IsPrev }}Previous{{ end -}}
+          {{- if .IsNext }}Next{{ end -}}
+          {{- if .IsGap }}&ellipsis;{{ end }}
+          {{- .Page -}}
+        </a>
+      </li>
+    {{ end }}
+  </ul>
+</nav>
+{{ end }}

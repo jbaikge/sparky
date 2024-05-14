@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"time"
+
+	"github.com/jbaikge/sparky/modules/pagination"
 )
 
 type User struct {
@@ -46,4 +48,8 @@ func (u User) Validate() (errs map[string]string) {
 	}
 
 	return
+}
+
+type UserListParams struct {
+	Pagination *pagination.Pagination
 }

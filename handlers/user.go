@@ -7,6 +7,7 @@ import (
 
 	"github.com/jbaikge/sparky/models/user"
 	"github.com/jbaikge/sparky/modules/page"
+	"github.com/jbaikge/sparky/modules/pagination"
 )
 
 func userList(w http.ResponseWriter, r *http.Request) {
@@ -14,15 +15,15 @@ func userList(w http.ResponseWriter, r *http.Request) {
 	p.Data["PageActiveUsers"] = true
 
 	userRepo := user.NewUserRepository(p.Database())
-	params := user.UserListParams{
-		Page:    1,
-		PerPage: 25,
+	params := &user.UserListParams{
+		Pagination: pagination.NewPagination(r),
 	}
 	users, err := userRepo.UserList(r.Context(), params)
 	if err != nil {
 		slog.Error("UserList error", "error", err)
 	}
 	p.Data["Users"] = users
+	p.Data["Params"] = params
 	p.Render(w, "user/list")
 }
 
