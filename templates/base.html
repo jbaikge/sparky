@@ -22,16 +22,18 @@
         <h1>Sparky</h1>
         <sl-avatar label="User avatar" initials="{{ .Admin.Initials }}" class="avatar"></sl-avatar>
       </header>
-      <nav>
-        <ol hx-target="main">
-          <li><a hx-get="/admin/dashboard">Dashboard</a></li>
-          <!--
-          <li><a hx-get="/admin/events">Events</a></li>
-          <li><a hx-get="/admin/templates">Templates</a></li>
-          -->
-          <li><a hx-get="/admin/users/list">Users</a></li>
-          <li><a hx-get="/admin/roles/list">Roles</a></li>
-        </ol>
+      <nav hx-target="main">
+        <sl-tree selection="leaf">
+          <sl-tree-item hx-get="/admin/dashboard"{{ if .PageActiveDashboard }} selected{{ end}}>Dashboard</sl-tree-item>
+          <sl-tree-item>
+            Users
+            <sl-tree-item hx-get="/admin/users/list"{{ if .PageActiveUsers }} selected{{ end }}>View All</sl-tree-item>
+          </sl-tree-item>
+          <sl-tree-item>
+            Roles
+            <sl-tree-item hx-get="/admin/roles/list"{{ if .PageActiveRoles }} selected{{ end }}>View All</sl-tree-item>
+          </sl-tree-item>
+        </sl-tree>
       </nav>
       <main hx-target="this" hx-history-elt>
 {{ end }}

@@ -30,7 +30,7 @@ body {
 }
 @media (min-width: 48em) {
   .main-grid {
-    grid-template-columns: 10em 3fr;
+    grid-template-columns: 15em 3fr;
     grid-template-rows: min-content minmax(0, 1fr) min-content;
     grid-template-areas:
       "header header"
@@ -60,20 +60,10 @@ body {
 
 /* Main Navigation */
 .main-grid > nav {
-  background-color: var(--sl-color-neutral-100);
+  border-right: 0.125em solid var(--sl-color-neutral-100);
 }
-.main-grid > nav ol {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.main-grid > nav .active a {
-  background: var(--sl-color-neutral-300);
-  color: var(--sl-color-neutral-700);
-}
-.main-grid > nav a {
-  display: block;
-  padding: 0.25rem 1rem;
+.main-grid > nav sl-tree {
+  --x-indent-guide-width: 0.125em;
 }
 
 /* Tables */
