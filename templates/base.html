@@ -37,11 +37,11 @@
       <nav hx-target="main">
         <sl-tree selection="leaf">
           <sl-tree-item hx-get="/admin/dashboard"{{ if .PageActiveDashboard }} selected{{ end}}>Dashboard</sl-tree-item>
-          <sl-tree-item>
+          <sl-tree-item {{- if .PageActiveUsers }} expanded{{ end }}>
             Users
             <sl-tree-item hx-get="/admin/users/list"{{ if .PageActiveUsers }} selected{{ end }}>View All</sl-tree-item>
           </sl-tree-item>
-          <sl-tree-item>
+          <sl-tree-item {{- if .PageActiveRoles }} expanded{{ end }}>
             Roles
             <sl-tree-item hx-get="/admin/roles/list"{{ if .PageActiveRoles }} selected{{ end }}>View All</sl-tree-item>
           </sl-tree-item>
