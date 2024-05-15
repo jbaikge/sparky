@@ -17,16 +17,11 @@ func NewPermissionRepository(db database.Database) *PermissionRepository {
 	}
 }
 
-type CreatePermissionParams struct {
-	PermissionId string
-	Description  string
-}
-
-func (r *PermissionRepository) CreatePermission(ctx context.Context, arg CreatePermissionParams) error {
+func (r *PermissionRepository) CreatePermission(ctx context.Context, arg Permission) error {
 	query := `
-    INSERT INTO permissions (permission_id, description) VALUES (?, ?)
+    INSERT INTO permissions (permission_id, category, description) VALUES (?, ?, ?)
     `
-	_, err := r.db.ExecContext(ctx, query, arg.PermissionId, arg.Description)
+	_, err := r.db.ExecContext(ctx, query, arg.PermissionId, arg.Category, arg.Description)
 	return fmt.Errorf("failed to create permission: %w", err)
 }
 
@@ -40,7 +35,15 @@ func (r *PermissionRepository) DeletePermission(ctx context.Context, permissionI
 
 func (r *PermissionRepository) GetPermissions(ctx context.Context) ([]Permission, error) {
 	query := `
-    SELECT permission_id, description FROM permissions ORDER BY permission_id
+    SELECT
+        permission_id,
+        category,
+        description
+    FROM
+        permissions
+    ORDER BY
+        category ASC,
+        permission_id ASC
     `
 	rows, err := r.db.QueryContext(ctx, query)
 	if err != nil {
@@ -51,7 +54,8 @@ func (r *PermissionRepository) GetPermissions(ctx context.Context) ([]Permission
 	var items []Permission
 	for rows.Next() {
 		var i Permission
-		if err := rows.Scan(&i.PermissionId, &i.Description); err != nil {
+		err := rows.Scan(&i.PermissionId, &i.Category, &i.Description)
+		if err != nil {
 			return nil, fmt.Errorf("failed to scan permission: %w", err)
 		}
 		items = append(items, i)

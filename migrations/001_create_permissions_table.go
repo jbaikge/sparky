@@ -13,6 +13,7 @@ func init() {
 const mysqlCreatePermissionsTable = `
 CREATE TABLE permissions (
     permission_id VARCHAR(64) NOT NULL PRIMARY KEY,
+    category VARCHAR(64) NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT ''
 ) ENGINE=InnoDB CHARSET=utf8mb4
 `
@@ -20,6 +21,7 @@ CREATE TABLE permissions (
 const sqliteCreatePermissionsTable = `
 CREATE TABLE permissions (
     permission_id VARCHAR(64) NOT NULL PRIMARY KEY,
+    category VARCHAR(64) NOT NULL DEFAULT '',
     description TEXT NOT NULL DEFAULT ''
 )
 `
