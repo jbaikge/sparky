@@ -20,6 +20,18 @@
       <header>
         <sl-icon-button name="list"></sl-icon-button>
         <h1>Sparky</h1>
+        <sl-dropdown id="theme-selector" placement="bottom-end" disatance="3">
+          <sl-button slot="trigger" size="large" variant="text" caret="" title="Toggle theme">
+            <sl-icon class="only-light" name="sun-fill" aria-hidden="true" library="default"></sl-icon>
+            <sl-icon class="only-dark" name="moon-fill" aria-hidden="true" library="default"></sl-icon>
+          </sl-button>
+          <sl-menu role="menu">
+            <sl-menu-item type="checkbox" value="light" role="menuitemcheckbox" aria-checked="false" aria-disabled="false" tabindex="-1">Light</sl-menu-item>
+            <sl-menu-item type="checkbox" value="dark" role="menuitemcheckbox" aria-checked="false" aria-disabled="false" tabindex="-1">Dark</sl-menu-item>
+            <sl-divider role="separator" aria-orientation="horizontal"></sl-divider>
+            <sl-menu-item type="checkbox" value="auto" role="menuitemcheckbox" aria-checked="true" aria-disabled="false" tabindex="0" checked>System</sl-menu-item>
+          </sl-menu>
+        </sl-dropdown>
         <sl-avatar label="User avatar" initials="{{ .Admin.Initials }}" class="avatar"></sl-avatar>
       </header>
       <nav hx-target="main">

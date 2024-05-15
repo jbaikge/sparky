@@ -50,12 +50,14 @@ body {
   font-size: var(--sl-font-size-2x-large);
 }
 .main-grid > header h1 {
+  flex-grow: 1;
   margin: 0;
 }
-.main-grid > header .avatar {
-  flex-grow: 1;
-  display: flex;
-  justify-content: flex-end;
+#theme-selector sl-button::part(base) {
+  color: var(--sl-color-neutral-500);
+}
+html.sl-theme-dark .only-light, html:not(.sl-theme-dark) .only-dark {
+  display: none !important;
 }
 
 /* Main Navigation */
