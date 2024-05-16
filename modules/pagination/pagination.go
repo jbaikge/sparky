@@ -35,7 +35,7 @@ func (p Pagination) Current() int {
 
 func (p Pagination) Links() (links []Link) {
 	lastPage := p.pageCount()
-	if lastPage == 1 {
+	if lastPage <= 1 {
 		return
 	}
 

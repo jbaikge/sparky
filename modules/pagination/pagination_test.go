@@ -191,6 +191,15 @@ func TestLinksSinglePage(t *testing.T) {
 	}
 }
 
+func TestLinksZeroResults(t *testing.T) {
+	r, _ := http.NewRequest("GET", "/test", nil)
+	p := NewPagination(r)
+	p.SetTotal(0)
+	if num := len(p.Links()); num != 0 {
+		t.Fatalf("expected zero links, got %d", num)
+	}
+}
+
 func TestLinksWindowed(t *testing.T) {
 	r, _ := http.NewRequest("GET", "/test?p=6&pp=10", nil)
 	p := NewPagination(r)
