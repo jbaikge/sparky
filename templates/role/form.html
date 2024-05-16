@@ -1,0 +1,19 @@
+{{ define "role/form" }}
+<header>
+  <h2>{{ if eq .Role.RoleId 0 }}Add{{ else }}Modify{{ end }} Role</h2>
+</header>
+{{- with .Errors.Database }}
+<sl-alert variant="danger" open>
+  <sl-icon slot="icon" name="exclamation-octagon"></sl-icon>
+  {{ . }}
+</sl-alert>
+{{ end }}
+<form hx-post="{{ .FormAction }}">
+  <fieldset style="grid-template-columns: 1fr 1fr;">
+    <sl-input name="name" label="Name" value="{{ .Role.Name }}" autocomplete="off" required {{- with .Errors.Name }} help-text="{{ . }}" data-user-invalid{{ end }}></sl-input>
+  </fieldset>
+  <sl-button-group>
+    <sl-button type="submit" variant="primary">Submit</sl-button>
+  </sl-button-group>
+</form>
+{{ end }}

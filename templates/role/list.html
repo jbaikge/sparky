@@ -1,0 +1,33 @@
+{{ define "role/list" }}
+<header>
+  <h2>Roles</h2>
+  <sl-button-group class="header-buttons">
+    <sl-button hx-get="/admin/roles/add">Add Role</sl-button>
+  </sl-button-group>
+</header>
+{{ template "modules/pagination" .Params.Pagination }}
+<div class="table-scroll">
+  <table>
+    <thead>
+      <tr>
+        <th>Role</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {{ range .Roles }}
+        <tr>
+          <td>{{ .FirstName }}</td>
+          <td>
+            <sl-button-group>
+              <sl-button hx-get="/admin/roles/edit/{{ .UserId }}" size="small" variant="primary">Edit</sl-button>
+              <sl-button hx-get="/admin/roles/delete/{{ .UserId }}" size="small" variant="danger">Delete</sl-button>
+            </sl-button-group>
+          </td>
+        </tr>
+      {{ end }}
+    </tbody>
+  </table>
+</div>
+{{ template "modules/pagination" .Params.Pagination }}
+{{ end }}

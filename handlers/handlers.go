@@ -13,9 +13,16 @@ type Mux interface {
 func Apply(mux Mux) {
 	mux.HandleFunc("GET /admin/login", adminLogin)
 	mux.HandleFunc("POST /admin/login", adminLoginAuth)
+
 	mux.HandleFunc("GET /admin/dashboard", dashboard)
+
+	mux.HandleFunc("GET /admin/roles/list", roleList)
+	mux.HandleFunc("GET /admin/roles/add", roleForm)
+	mux.HandleFunc("POST /admin/roles/add", roleForm)
+	mux.HandleFunc("GET /admin/roles/edit/{id}", roleForm)
+	mux.HandleFunc("POST /admin/roles/edit/{id}", roleForm)
+
 	mux.HandleFunc("GET /admin/users/list", userList)
-	mux.HandleFunc("GET /admin/users/list/{page}", userList)
 	mux.HandleFunc("GET /admin/users/add", userForm)
 	mux.HandleFunc("POST /admin/users/add", userForm)
 	mux.HandleFunc("GET /admin/users/edit/{id}", userForm)
