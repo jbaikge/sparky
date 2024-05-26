@@ -26,5 +26,5 @@ func (m *Logger) SetHandler(handler http.Handler) {
 func (m *Logger) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	start := time.Now()
 	m.handler.ServeHTTP(w, r)
-	m.logger.Info("request", "method", r.Method, "path", r.URL.Path, "time", time.Since(start))
+	m.logger.Info("request", "ip", r.RemoteAddr, "method", r.Method, "path", r.URL.Path, "time", time.Since(start))
 }
