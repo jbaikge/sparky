@@ -54,9 +54,11 @@ func main() {
 	if development {
 		handlers.Assets(app, "assets")
 		app.AddMiddleware(middleware.NewLiveTemplate("templates"))
+		slog.Debug("using live templates")
 	} else {
 		handlers.AssetsFS(app, srcFS)
 		app.AddMiddleware(middleware.NewEmbeddedTemplate(srcFS, "templates"))
+		slog.Debug("using embedded templates")
 	}
 
 	app.AddMiddleware(middleware.NewHTMX())
@@ -64,5 +66,6 @@ func main() {
 	app.AddMiddleware(middleware.NewAdminHandler(db))
 	app.AddMiddleware(middleware.NewContentType())
 	app.AddMiddleware(middleware.NewLogger(slog.Default())) // Always last
+	slog.Debug("serving requests", "address", "http://"+address)
 	app.ListenAndServe()
 }
